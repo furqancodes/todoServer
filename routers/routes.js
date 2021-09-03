@@ -19,13 +19,12 @@ router.get('/show', function(req, res){
 //    res.send('POST route on things.');
 // });
 router.post("/add", async (req, res) => {
-    const createUser = new users(req.body);
+    const newTask = new tasks(req.body);
     try {
-      await createUser.save();
-      const token = await createUser.generateToken();
-      res.status(201).send({ createUser, token });
-    } catch (createUserError) {
-      res.status(400).send(createUserError);
+      await newTask.save();
+      res.status(201).send({ newTask });
+    } catch (err) {
+      res.status(400).send(err.message);
     }
   });
 module.exports = router;
