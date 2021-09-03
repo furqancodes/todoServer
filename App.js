@@ -1,15 +1,17 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
-const port = process.env.PORT || 3000
-require('./db/mongoose')
-
-app.use(express.json())
+app.use(cors())
 
 const routes = require("./routers/routes")
+require('./db/mongoose')
 
+const port = process.env.PORT || 8080
+
+app.use(express.json())
 app.use(routes)
 
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`listening at http://localhost:${port}`)
 })
