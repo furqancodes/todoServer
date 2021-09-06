@@ -11,7 +11,8 @@ router.post("/add", async (req, res) => {
   const newTask = new tasks(req.body);
   try {
     await newTask.save();
-    res.status(201).send({ newTask });
+    const allTasks = await tasks.find({});
+    res.status(201).send(allTasks);
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -24,7 +25,8 @@ router.delete("/tasks/:taskid", async (req, res) => {
     if (!taskDelete) {
       res.status(404).send("not found");
     }
-    res.send(taskDelete);
+    const allTasks = await tasks.find({});
+    res.send(allTasks);
   } catch (taskDeleteError) {
     res.status(500).send(taskDeleteError);
   }
