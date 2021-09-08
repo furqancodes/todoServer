@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios")
 const tasks = require("../models/tasks");
 const router = express.Router();
+require('dotenv').config()
 
 router.get("/show", async (req, res) => {
   const allTasks = await tasks.find({});
@@ -10,11 +11,11 @@ router.get("/show", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   const newTask = new tasks(req.body);
-  
+  console.log(process.env.slack_url)
   try {
     await newTask.save();
-    await axios.post("https://hooks.slack.com/services/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",{
-      text:`Task added : ${newTask.description}`,
+    await axios.post(process.env.slack_url,{
+      text:`New to-do item is created: ${newTask.description}`,
     })
     res.status(201).send({message:"task added"});
   } catch (err) {
@@ -23,14 +24,15 @@ router.post("/add", async (req, res) => {
 });
 
 router.delete("/tasks/:taskid", async (req, res) => {
-  console.log(req.params.taskid)
   try {
     const taskDelete = await tasks.findByIdAndDelete(req.params.taskid);
     if (!taskDelete) {
       res.status(404).send("not found");
     }
-    const allTasks = await tasks.find({});
-    res.send(allTasks);
+    await axios.post(process.env.slack_url,{
+      text:`${newTask.description} :item is removed`,
+    })
+    res.send({message:"Task Deleted"});
   } catch (taskDeleteError) {
     res.status(500).send(taskDeleteError);
   }
