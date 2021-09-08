@@ -30,7 +30,7 @@ router.delete("/tasks/:taskid", async (req, res) => {
       res.status(404).send("not found");
     }
     await axios.post(process.env.slack_url,{
-      text:`${newTask.description} :item is removed`,
+      text:`${taskDelete.description} :item is removed`,
     })
     res.send({message:"Task Deleted"});
   } catch (taskDeleteError) {
