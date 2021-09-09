@@ -11,7 +11,6 @@ router.get("/show", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   const newTask = new tasks(req.body);
-  console.log(process.env.slack_url)
   try {
     await newTask.save();
     await axios.post(process.env.slack_url,{
@@ -37,4 +36,29 @@ router.delete("/tasks/:taskid", async (req, res) => {
     res.status(500).send(taskDeleteError);
   }
 });
+
+router.post("/slack",async(req,res)=>{
+  const {tasks,message} = req.body
+  const blocks = tasks.map((task)=>{
+    return{
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: ` ▪ ${task.description}`
+        },
+      ]
+    }
+  })
+  try {
+    await axios.post(process.env.slack_url,{
+     text: message,
+     blocks 
+    })
+    res.send({message:"Pushed to Slack"});
+  } catch (error) {
+    res.status(400).send(error.message);
+
+  }
+})
 module.exports = router;
